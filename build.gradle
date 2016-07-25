@@ -39,14 +39,14 @@ import de.undercouch.gradle.tasks.download.Download
 import org.yaml.snakeyaml.Yaml
 
 task downloadAudio(type: Download) {
-    src "https://github.com/marytts/dfki-semaine-data/releases/download/v0.1/$flacFile.name"
+    src "https://github.com/marytts/dfki-semaine-data/releases/download/v0.2/$flacFile.name"
     dest flacFile
     overwrite false
     acceptAnyCertificate true
 }
 
 task downloadData(type: Download) {
-    src "https://github.com/marytts/dfki-semaine-data/releases/download/v0.1/$yamlFile.name"
+    src "https://github.com/marytts/dfki-semaine-data/releases/download/v0.2/$yamlFile.name"
     dest yamlFile
     overwrite false
     acceptAnyCertificate true
@@ -65,8 +65,10 @@ task extractLab {
             if (utterance.segments) {
                 file("$destDir/${utterance.prompt}.lab").withWriter { writer ->
                     writer.println '#'
+                    def end = 0.0
                     utterance.segments.each { segment ->
-                        writer.println "$segment.end 125 $segment.lab"
+                        end += segment.dur
+                        writer.println "${end.round(6)} 125 $segment.lab"
                     }
                 }
             }
